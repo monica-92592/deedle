@@ -1,0 +1,11 @@
+Parcel ID,Power to Sale Date,Tax Area,Location,Delinquent Amount,Land Value,Improvement Value,Property Description,Address
+123-456-789,2024-03-15,District A,Downtown,$15000,$45000,$120000,"Single family residence, 3BR/2BA, 1800 sq ft",123 Main St
+234-567-890,2024-02-28,District B,Suburbs,$8500,$25000,$75000,"Residential lot, 0.5 acres, utilities available",456 Oak Ave
+345-678-901,2024-04-10,District C,Industrial,$25000,$15000,$80000,"Commercial building, 2000 sq ft warehouse",789 Industrial Blvd
+456-789-012,2024-01-20,District A,Downtown,$12000,$60000,$180000,"Multi-family dwelling, 4 units",321 Elm Street
+567-890-123,2024-03-05,District B,Residential,$6500,$18000,$45000,"Single family home, 2BR/1BA, 1200 sq ft",654 Pine Road
+678-901-234,2024-02-15,District C,Rural,$4200,$12000,$25000,"Raw land, 2.5 acres, agricultural use",987 Farm Lane
+789-012-345,2024-04-01,District A,Downtown,$18000,$35000,$95000,"Commercial office space, 1500 sq ft",147 Business Plaza
+890-123-456,2024-03-20,District B,Suburbs,$9500,$28000,$65000,"Single family residence, 4BR/3BA, 2200 sq ft",258 Maple Drive
+901-234-567,2024-02-10,District C,Industrial,$22000,$20000,$110000,"Manufacturing facility, 3000 sq ft",369 Factory Row
+012-345-678,2024-04-05,District A,Downtown,$13500,$50000,$160000,"Mixed-use building, retail/office",741 Commerce St
