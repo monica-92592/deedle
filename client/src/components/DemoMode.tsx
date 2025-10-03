@@ -6,6 +6,8 @@ interface PropertyInfo {
   apn: string
   address: string
   owner: string
+  state: string
+  county: string
   assessedValue: number
   taxOwed: number
   delinquencyAge: number
@@ -20,17 +22,52 @@ interface PropertyInfo {
 }
 
 const DemoMode: React.FC = () => {
+  const [searchStep, setSearchStep] = useState<'state' | 'county' | 'property'>('state')
+  const [selectedState, setSelectedState] = useState('')
+  const [selectedCounty, setSelectedCounty] = useState('')
   const [apn, setApn] = useState('')
   const [propertyInfo, setPropertyInfo] = useState<PropertyInfo | null>(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
 
+  // Mock state and county data
+  const states = [
+    { code: 'CA', name: 'California' },
+    { code: 'TX', name: 'Texas' },
+    { code: 'FL', name: 'Florida' },
+    { code: 'NY', name: 'New York' },
+    { code: 'IL', name: 'Illinois' }
+  ]
+
+  const counties = {
+    'CA': [
+      { code: 'LA', name: 'Los Angeles County' },
+      { code: 'OC', name: 'Orange County' },
+      { code: 'SD', name: 'San Diego County' },
+      { code: 'SF', name: 'San Francisco County' }
+    ],
+    'TX': [
+      { code: 'HA', name: 'Harris County' },
+      { code: 'DA', name: 'Dallas County' },
+      { code: 'TR', name: 'Tarrant County' },
+      { code: 'BE', name: 'Bexar County' }
+    ],
+    'FL': [
+      { code: 'MI', name: 'Miami-Dade County' },
+      { code: 'BR', name: 'Broward County' },
+      { code: 'OR', name: 'Orange County' },
+      { code: 'HI', name: 'Hillsborough County' }
+    ]
+  }
+
   // Mock property database for demo
   const mockProperties: PropertyInfo[] = [
     {
       apn: '123-456-789',
-      address: '123 Main St, Anytown, CA 90210',
+      address: '123 Main St, Los Angeles, CA 90210',
       owner: 'John Smith',
+      state: 'CA',
+      county: 'LA',
       assessedValue: 450000,
       taxOwed: 12500,
       delinquencyAge: 2,
@@ -45,8 +82,10 @@ const DemoMode: React.FC = () => {
     },
     {
       apn: '456-789-012',
-      address: '456 Oak Ave, Anytown, CA 90210',
+      address: '456 Oak Ave, Santa Ana, CA 92701',
       owner: 'Jane Doe',
+      state: 'CA',
+      county: 'OC',
       assessedValue: 280000,
       taxOwed: 8500,
       delinquencyAge: 1,
@@ -61,8 +100,10 @@ const DemoMode: React.FC = () => {
     },
     {
       apn: '789-012-345',
-      address: '789 Pine St, Anytown, CA 90210',
+      address: '789 Pine St, Houston, TX 77001',
       owner: 'Bob Johnson',
+      state: 'TX',
+      county: 'HA',
       assessedValue: 320000,
       taxOwed: 15200,
       delinquencyAge: 3,
@@ -77,7 +118,17 @@ const DemoMode: React.FC = () => {
     }
   ]
 
-  const handleSearch = async (e: React.FormEvent) => {
+  const handleStateSelect = (stateCode: string) => {
+    setSelectedState(stateCode)
+    setSearchStep('county')
+  }
+
+  const handleCountySelect = (countyCode: string) => {
+    setSelectedCounty(countyCode)
+    setSearchStep('property')
+  }
+
+  const handlePropertySearch = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
     setError('')
@@ -86,15 +137,28 @@ const DemoMode: React.FC = () => {
     // Simulate API delay
     await new Promise(resolve => setTimeout(resolve, 1000))
 
-    const property = mockProperties.find(p => p.apn === apn)
+    const property = mockProperties.find(p => 
+      p.apn === apn && 
+      p.state === selectedState && 
+      p.county === selectedCounty
+    )
     
     if (property) {
       setPropertyInfo(property)
     } else {
-      setError('Property not found. Try: 123-456-789, 456-789-012, or 789-012-345')
+      setError(`Property not found in ${counties[selectedState as keyof typeof counties]?.find(c => c.code === selectedCounty)?.name}. Try: 123-456-789, 456-789-012, or 789-012-345`)
     }
     
     setLoading(false)
+  }
+
+  const resetSearch = () => {
+    setSearchStep('state')
+    setSelectedState('')
+    setSelectedCounty('')
+    setApn('')
+    setPropertyInfo(null)
+    setError('')
   }
 
   const calculateEquityRatio = (assessedValue: number, taxOwed: number) => {
@@ -146,56 +210,161 @@ const DemoMode: React.FC = () => {
         <div className="bg-white rounded-xl shadow-sm border p-6 mb-8">
           <div className="text-center mb-6">
             <h2 className="text-2xl font-bold text-gray-900 mb-2">
-              Property Lookup Demo
+              Property Tax Lookup Demo
             </h2>
             <p className="text-gray-600">
-              Enter an APN (Assessor's Parcel Number) to get property information
+              Search property tax records by state, county, and APN
             </p>
           </div>
 
-          <form onSubmit={handleSearch} className="max-w-md mx-auto">
-            <div className="flex gap-2">
-              <div className="flex-1">
-                <input
-                  type="text"
-                  value={apn}
-                  onChange={(e) => setApn(e.target.value)}
-                  placeholder="Enter APN (e.g., 123-456-789)"
-                  className="input-field"
-                  required
-                />
+          {/* Progress Steps */}
+          <div className="flex justify-center mb-8">
+            <div className="flex items-center space-x-4">
+              <div className={`flex items-center ${searchStep === 'state' ? 'text-primary' : searchStep === 'county' || searchStep === 'property' ? 'text-green-600' : 'text-gray-400'}`}>
+                <div className={`w-8 h-8 rounded-full flex items-center justify-center ${searchStep === 'state' ? 'bg-primary text-white' : searchStep === 'county' || searchStep === 'property' ? 'bg-green-600 text-white' : 'bg-gray-200'}`}>
+                  1
+                </div>
+                <span className="ml-2 font-medium">State</span>
               </div>
-              <button
-                type="submit"
-                disabled={loading}
-                className="btn-primary flex items-center gap-2"
-              >
-                <Search className="w-4 h-4" />
-                {loading ? 'Searching...' : 'Search'}
-              </button>
+              <div className={`w-8 h-1 ${searchStep === 'county' || searchStep === 'property' ? 'bg-green-600' : 'bg-gray-200'}`}></div>
+              <div className={`flex items-center ${searchStep === 'county' ? 'text-primary' : searchStep === 'property' ? 'text-green-600' : 'text-gray-400'}`}>
+                <div className={`w-8 h-8 rounded-full flex items-center justify-center ${searchStep === 'county' ? 'bg-primary text-white' : searchStep === 'property' ? 'bg-green-600 text-white' : 'bg-gray-200'}`}>
+                  2
+                </div>
+                <span className="ml-2 font-medium">County</span>
+              </div>
+              <div className={`w-8 h-1 ${searchStep === 'property' ? 'bg-green-600' : 'bg-gray-200'}`}></div>
+              <div className={`flex items-center ${searchStep === 'property' ? 'text-primary' : 'text-gray-400'}`}>
+                <div className={`w-8 h-8 rounded-full flex items-center justify-center ${searchStep === 'property' ? 'bg-primary text-white' : 'bg-gray-200'}`}>
+                  3
+                </div>
+                <span className="ml-2 font-medium">Property</span>
+              </div>
             </div>
-          </form>
+          </div>
 
-          {error && (
-            <div className="mt-4 bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-lg text-center">
-              {error}
+          {/* Step 1: State Selection */}
+          {searchStep === 'state' && (
+            <div className="max-w-2xl mx-auto">
+              <h3 className="text-lg font-semibold text-gray-900 mb-4 text-center">Select State</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                {states.map((state) => (
+                  <button
+                    key={state.code}
+                    onClick={() => handleStateSelect(state.code)}
+                    className="p-4 border border-gray-200 rounded-lg hover:border-primary hover:bg-primary/5 transition-colors text-left"
+                  >
+                    <div className="font-medium text-gray-900">{state.name}</div>
+                    <div className="text-sm text-gray-500">{state.code}</div>
+                  </button>
+                ))}
+              </div>
             </div>
           )}
 
-          <div className="mt-6 text-center">
-            <p className="text-sm text-gray-500 mb-2">Try these demo APNs:</p>
-            <div className="flex gap-2 justify-center flex-wrap">
-              {mockProperties.map((prop) => (
+          {/* Step 2: County Selection */}
+          {searchStep === 'county' && (
+            <div className="max-w-2xl mx-auto">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-lg font-semibold text-gray-900">
+                  Select County in {states.find(s => s.code === selectedState)?.name}
+                </h3>
                 <button
-                  key={prop.apn}
-                  onClick={() => setApn(prop.apn)}
-                  className="text-xs bg-gray-100 hover:bg-gray-200 px-3 py-1 rounded-full transition-colors"
+                  onClick={() => setSearchStep('state')}
+                  className="text-sm text-gray-500 hover:text-gray-700"
                 >
-                  {prop.apn}
+                  ← Change State
                 </button>
-              ))}
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                {counties[selectedState as keyof typeof counties]?.map((county) => (
+                  <button
+                    key={county.code}
+                    onClick={() => handleCountySelect(county.code)}
+                    className="p-4 border border-gray-200 rounded-lg hover:border-primary hover:bg-primary/5 transition-colors text-left"
+                  >
+                    <div className="font-medium text-gray-900">{county.name}</div>
+                    <div className="text-sm text-gray-500">{county.code}</div>
+                  </button>
+                ))}
+              </div>
             </div>
-          </div>
+          )}
+
+          {/* Step 3: Property Search */}
+          {searchStep === 'property' && (
+            <div className="max-w-2xl mx-auto">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-lg font-semibold text-gray-900">
+                  Search Property in {counties[selectedState as keyof typeof counties]?.find(c => c.code === selectedCounty)?.name}
+                </h3>
+                <button
+                  onClick={() => setSearchStep('county')}
+                  className="text-sm text-gray-500 hover:text-gray-700"
+                >
+                  ← Change County
+                </button>
+              </div>
+
+              <form onSubmit={handlePropertySearch}>
+                <div className="flex gap-2">
+                  <div className="flex-1">
+                    <input
+                      type="text"
+                      value={apn}
+                      onChange={(e) => setApn(e.target.value)}
+                      placeholder="Enter APN (e.g., 123-456-789)"
+                      className="input-field"
+                      required
+                    />
+                  </div>
+                  <button
+                    type="submit"
+                    disabled={loading}
+                    className="btn-primary flex items-center gap-2"
+                  >
+                    <Search className="w-4 h-4" />
+                    {loading ? 'Searching...' : 'Search'}
+                  </button>
+                </div>
+              </form>
+
+              {error && (
+                <div className="mt-4 bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-lg text-center">
+                  {error}
+                </div>
+              )}
+
+              <div className="mt-6 text-center">
+                <p className="text-sm text-gray-500 mb-2">Try these demo APNs:</p>
+                <div className="flex gap-2 justify-center flex-wrap">
+                  {mockProperties
+                    .filter(p => p.state === selectedState && p.county === selectedCounty)
+                    .map((prop) => (
+                      <button
+                        key={prop.apn}
+                        onClick={() => setApn(prop.apn)}
+                        className="text-xs bg-gray-100 hover:bg-gray-200 px-3 py-1 rounded-full transition-colors"
+                      >
+                        {prop.apn}
+                      </button>
+                    ))}
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Reset Button */}
+          {(searchStep === 'county' || searchStep === 'property') && (
+            <div className="text-center mt-6">
+              <button
+                onClick={resetSearch}
+                className="text-sm text-gray-500 hover:text-gray-700"
+              >
+                Start Over
+              </button>
+            </div>
+          )}
         </div>
 
         {/* Property Results */}
@@ -220,6 +389,8 @@ const DemoMode: React.FC = () => {
                 </h4>
                 <div className="space-y-2 text-sm">
                   <div><span className="font-medium">Address:</span> {propertyInfo.address}</div>
+                  <div><span className="font-medium">State:</span> {states.find(s => s.code === propertyInfo.state)?.name}</div>
+                  <div><span className="font-medium">County:</span> {counties[propertyInfo.state as keyof typeof counties]?.find(c => c.code === propertyInfo.county)?.name}</div>
                   <div><span className="font-medium">Owner:</span> {propertyInfo.owner}</div>
                   <div><span className="font-medium">Type:</span> {propertyInfo.propertyType}</div>
                   <div><span className="font-medium">Lot Size:</span> {propertyInfo.lotSize} acres</div>
