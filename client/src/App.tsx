@@ -1,8 +1,10 @@
 // React import not needed in modern React
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
+import { HashRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
 import { AuthProvider } from './contexts/AuthContext'
 import { PropertyProvider } from './contexts/PropertyContext'
 import Layout from './components/Layout'
+import ErrorBoundary from './components/ErrorBoundary'
+import DebugInfo from './components/DebugInfo'
 import Login from './pages/Login'
 import Register from './pages/Register'
 import Dashboard from './pages/Dashboard'
@@ -15,11 +17,12 @@ import ProtectedRoute from './components/ProtectedRoute'
 
 function App() {
   return (
-    <AuthProvider>
-      <PropertyProvider>
-        <Router>
-          <div className="min-h-screen bg-gray-50">
-            <Routes>
+    <ErrorBoundary>
+      <AuthProvider>
+        <PropertyProvider>
+          <Router>
+            <div className="min-h-screen bg-gray-50">
+              <Routes>
               {/* Public routes */}
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
@@ -39,10 +42,12 @@ function App() {
                 <Route path="watchlist" element={<Watchlist />} />
               </Route>
             </Routes>
+            <DebugInfo />
           </div>
         </Router>
       </PropertyProvider>
     </AuthProvider>
+    </ErrorBoundary>
   )
 }
 
