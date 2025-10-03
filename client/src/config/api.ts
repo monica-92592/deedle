@@ -10,6 +10,9 @@ const getApiUrl = () => {
   return 'http://localhost:5000'
 }
 
+// Demo mode flag - set to true when backend is not available
+export const DEMO_MODE = import.meta.env.PROD && window.location.hostname === 'monica-92592.github.io'
+
 export const API_URL = getApiUrl()
 
 export const API_ENDPOINTS = {

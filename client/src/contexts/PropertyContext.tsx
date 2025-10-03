@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, ReactNode } from 'react'
-import { API_URL } from '../config/api'
+import { API_URL, DEMO_MODE } from '../config/api'
+import { DEMO_PROPERTIES, DEMO_DATASETS } from '../services/demoData'
 
 interface Property {
   id: number
@@ -85,6 +86,13 @@ export const PropertyProvider: React.FC<PropertyProviderProps> = ({ children }) 
     setError(null)
     
     try {
+      if (DEMO_MODE) {
+        // Use demo data when backend is not available
+        setDatasets(DEMO_DATASETS)
+        setLoading(false)
+        return
+      }
+
       const token = localStorage.getItem('token')
       const response = await fetch(`${API_URL}/api/upload/datasets`, {
         headers: {
@@ -110,6 +118,13 @@ export const PropertyProvider: React.FC<PropertyProviderProps> = ({ children }) 
     setError(null)
     
     try {
+      if (DEMO_MODE) {
+        // Use demo data when backend is not available
+        setProperties(DEMO_PROPERTIES)
+        setLoading(false)
+        return
+      }
+
       const token = localStorage.getItem('token')
       const queryParams = new URLSearchParams()
       
