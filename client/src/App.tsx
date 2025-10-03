@@ -28,16 +28,8 @@ function App() {
               <Route path="/" element={<DemoMode />} />
               <Route path="/demo" element={<DemoMode />} />
               
-              {/* Public routes */}
-              <Route path="/login" element={<Login />} />
-              <Route path="/register" element={<Register />} />
-              
-              {/* Protected routes */}
-              <Route path="/app" element={
-                <ProtectedRoute>
-                  <Layout />
-                </ProtectedRoute>
-              }>
+              {/* Full app - no authentication required */}
+              <Route path="/app" element={<Layout />}>
                 <Route index element={<Navigate to="/app/dashboard" replace />} />
                 <Route path="dashboard" element={<Dashboard />} />
                 <Route path="upload" element={<Upload />} />

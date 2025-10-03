@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
-import { Search, MapPin, DollarSign, Calendar, Building, LogIn, UserPlus } from 'lucide-react'
+import { Search, MapPin, DollarSign, Calendar, Building, LogIn, UserPlus, BarChart3 } from 'lucide-react'
 
 interface PropertyInfo {
   apn: string
@@ -130,18 +130,11 @@ const DemoMode: React.FC = () => {
                 Demo Mode
               </div>
               <Link
-                to="/login"
-                className="flex items-center gap-2 text-sm text-gray-600 hover:text-primary transition-colors"
+                to="/app"
+                className="flex items-center gap-2 text-sm bg-primary text-white px-4 py-2 rounded-lg hover:bg-primary-dark transition-colors"
               >
-                <LogIn className="w-4 h-4" />
-                Login
-              </Link>
-              <Link
-                to="/register"
-                className="flex items-center gap-2 text-sm text-primary hover:text-primary-dark transition-colors"
-              >
-                <UserPlus className="w-4 h-4" />
-                Register
+                <BarChart3 className="w-4 h-4" />
+                Full App
               </Link>
             </div>
           </div>
@@ -290,7 +283,16 @@ const DemoMode: React.FC = () => {
 
         {/* Demo Features */}
         <div className="mt-8 bg-white rounded-xl shadow-sm border p-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">Demo Features</h3>
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-lg font-semibold text-gray-900">Demo Features</h3>
+            <Link
+              to="/app"
+              className="btn-primary flex items-center gap-2"
+            >
+              <BarChart3 className="w-4 h-4" />
+              Access Full App
+            </Link>
+          </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
               <h4 className="font-medium text-gray-900 mb-2">Property Analysis</h4>

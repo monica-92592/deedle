@@ -20,7 +20,7 @@ const Login: React.FC = () => {
 
     try {
       await login(email, password)
-      navigate('/dashboard')
+      navigate('/app/dashboard')
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Login failed')
     } finally {
