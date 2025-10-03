@@ -1,7 +1,10 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
-import App from './TestApp.tsx'
+import App from './App.tsx'
 import './index.css'
+
+console.log('Deedle app starting...')
+console.log('Current URL:', window.location.href)
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>

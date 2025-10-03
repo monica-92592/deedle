@@ -11,7 +11,9 @@ const getApiUrl = () => {
 }
 
 // Demo mode flag - set to true when backend is not available
-export const DEMO_MODE = true // Always use demo mode for now
+export const DEMO_MODE = typeof window !== 'undefined' && 
+  (window.location.hostname === 'monica-92592.github.io' || 
+   window.location.hostname === 'localhost')
 
 export const API_URL = getApiUrl()
 
