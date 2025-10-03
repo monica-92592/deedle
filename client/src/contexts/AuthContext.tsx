@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react'
-import { API_URL } from '../config/api'
+import { API_URL, DEMO_MODE } from '../config/api'
 
 interface User {
   id: number
@@ -48,6 +48,20 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   }, [])
 
   const fetchUserProfile = async (authToken: string) => {
+    if (DEMO_MODE) {
+      // Demo mode - simulate user profile
+      const demoUser = {
+        id: 1,
+        email: 'demo@deedle.com',
+        firstName: 'Demo',
+        lastName: 'User',
+        createdAt: new Date().toISOString()
+      }
+      setUser(demoUser)
+      setLoading(false)
+      return
+    }
+
     try {
       const response = await fetch(`${API_URL}/api/auth/profile`, {
         headers: {
@@ -72,6 +86,23 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   }
 
   const login = async (email: string, password: string) => {
+    if (DEMO_MODE) {
+      // Demo mode - simulate successful login
+      const demoUser = {
+        id: 1,
+        email: email,
+        firstName: 'Demo',
+        lastName: 'User',
+        createdAt: new Date().toISOString()
+      }
+      const demoToken = 'demo-token-' + Date.now()
+      
+      setToken(demoToken)
+      setUser(demoUser)
+      localStorage.setItem('token', demoToken)
+      return
+    }
+
     const response = await fetch(`${API_URL}/api/auth/login`, {
       method: 'POST',
       headers: {
@@ -92,6 +123,23 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   }
 
   const register = async (email: string, password: string, firstName: string, lastName: string) => {
+    if (DEMO_MODE) {
+      // Demo mode - simulate successful registration
+      const demoUser = {
+        id: 1,
+        email: email,
+        firstName: firstName,
+        lastName: lastName,
+        createdAt: new Date().toISOString()
+      }
+      const demoToken = 'demo-token-' + Date.now()
+      
+      setToken(demoToken)
+      setUser(demoUser)
+      localStorage.setItem('token', demoToken)
+      return
+    }
+
     const response = await fetch(`${API_URL}/api/auth/register`, {
       method: 'POST',
       headers: {
