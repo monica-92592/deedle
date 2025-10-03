@@ -1,6 +1,6 @@
 import React, { useState, useCallback } from 'react'
 import { useDropzone } from 'react-dropzone'
-import { Upload, FileText, CheckCircle, AlertCircle, X } from 'lucide-react'
+import { Upload as UploadIcon, FileText, CheckCircle, AlertCircle, X } from 'lucide-react'
 
 interface UploadResult {
   success: boolean
@@ -109,7 +109,7 @@ const Upload: React.FC = () => {
             </div>
           ) : (
             <div>
-              <Upload className="w-16 h-16 text-gray-400 mx-auto mb-4" />
+              <UploadIcon className="w-16 h-16 text-gray-400 mx-auto mb-4" />
               <p className="text-lg font-medium text-charcoal mb-2">
                 {isDragActive ? 'Drop your CSV file here' : 'Drag & drop your CSV file here'}
               </p>

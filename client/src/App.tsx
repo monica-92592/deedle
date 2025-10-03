@@ -1,4 +1,4 @@
-import React from 'react'
+// React import not needed in modern React
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
 import { AuthProvider } from './contexts/AuthContext'
 import { PropertyProvider } from './contexts/PropertyContext'

@@ -19,12 +19,12 @@ const Properties: React.FC = () => {
   const { properties, datasets, loading, error, fetchProperties, setCurrentDataset } = useProperties()
   const [filters, setFilters] = useState({
     search: '',
-    minScore: '',
-    maxScore: '',
-    minEquityRatio: '',
-    maxEquityRatio: '',
-    minAmount: '',
-    maxAmount: '',
+    minScore: undefined as number | undefined,
+    maxScore: undefined as number | undefined,
+    minEquityRatio: undefined as number | undefined,
+    maxEquityRatio: undefined as number | undefined,
+    minAmount: undefined as number | undefined,
+    maxAmount: undefined as number | undefined,
     propertyType: '',
     location: '',
     sortBy: 'investment_score',
@@ -41,19 +41,21 @@ const Properties: React.FC = () => {
   }, [datasets, filters])
 
   const handleFilterChange = (key: string, value: string) => {
-    setFilters(prev => ({ ...prev, [key]: value }))
+    const numericKeys = ['minScore', 'maxScore', 'minEquityRatio', 'maxEquityRatio', 'minAmount', 'maxAmount']
+    const processedValue = numericKeys.includes(key) && value ? parseFloat(value) : value
+    setFilters(prev => ({ ...prev, [key]: processedValue }))
     setCurrentPage(1)
   }
 
   const clearFilters = () => {
     setFilters({
       search: '',
-      minScore: '',
-      maxScore: '',
-      minEquityRatio: '',
-      maxEquityRatio: '',
-      minAmount: '',
-      maxAmount: '',
+      minScore: undefined,
+      maxScore: undefined,
+      minEquityRatio: undefined,
+      maxEquityRatio: undefined,
+      minAmount: undefined,
+      maxAmount: undefined,
       propertyType: '',
       location: '',
       sortBy: 'investment_score',
