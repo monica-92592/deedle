@@ -5,6 +5,7 @@ import { PropertyProvider } from './contexts/PropertyContext'
 import Layout from './components/Layout'
 import ErrorBoundary from './components/ErrorBoundary'
 import DebugInfo from './components/DebugInfo'
+import DemoMode from './components/DemoMode'
 import Login from './pages/Login'
 import Register from './pages/Register'
 import Dashboard from './pages/Dashboard'
@@ -23,17 +24,21 @@ function App() {
           <Router>
             <div className="min-h-screen bg-gray-50">
               <Routes>
+              {/* Demo route - no authentication required */}
+              <Route path="/" element={<DemoMode />} />
+              <Route path="/demo" element={<DemoMode />} />
+              
               {/* Public routes */}
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
               
               {/* Protected routes */}
-              <Route path="/" element={
+              <Route path="/app" element={
                 <ProtectedRoute>
                   <Layout />
                 </ProtectedRoute>
               }>
-                <Route index element={<Navigate to="/dashboard" replace />} />
+                <Route index element={<Navigate to="/app/dashboard" replace />} />
                 <Route path="dashboard" element={<Dashboard />} />
                 <Route path="upload" element={<Upload />} />
                 <Route path="properties" element={<Properties />} />

@@ -30,6 +30,12 @@ const Login: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+      {/* Debug info */}
+      <div className="fixed top-4 left-4 bg-black text-white p-2 text-xs rounded z-50">
+        <div>Email: {email}</div>
+        <div>Password: {password}</div>
+        <div>Loading: {loading.toString()}</div>
+      </div>
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
         <div className="flex justify-center">
           <div className="w-12 h-12 bg-primary rounded-xl flex items-center justify-center">
@@ -65,7 +71,10 @@ const Login: React.FC = () => {
                   autoComplete="email"
                   required
                   value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  onChange={(e) => {
+                    console.log('Email input changed:', e.target.value)
+                    setEmail(e.target.value)
+                  }}
                   className="input-field"
                   placeholder="Enter your email"
                 />
@@ -84,7 +93,10 @@ const Login: React.FC = () => {
                   autoComplete="current-password"
                   required
                   value={password}
-                  onChange={(e) => setPassword(e.target.value)}
+                  onChange={(e) => {
+                    console.log('Password input changed:', e.target.value)
+                    setPassword(e.target.value)
+                  }}
                   className="input-field pr-10"
                   placeholder="Enter your password"
                 />
