@@ -1,6 +1,8 @@
 import React, { useState, useCallback } from 'react'
 import { useDropzone } from 'react-dropzone'
 import { Upload as UploadIcon, FileText, CheckCircle, AlertCircle, X } from 'lucide-react'
+import { DEMO_MODE } from '../config/api'
+import DemoBanner from '../components/DemoBanner'
 
 interface UploadResult {
   success: boolean
@@ -26,35 +28,69 @@ const Upload: React.FC = () => {
     setUploadResult(null)
 
     try {
-      const formData = new FormData()
-      formData.append('file', file)
-
-      const token = localStorage.getItem('token')
-      const response = await fetch('/api/upload/csv', {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${token}`
-        },
-        body: formData
-      })
-
-      const result = await response.json()
-
-      if (response.ok) {
+      if (DEMO_MODE) {
+        // Simulate upload processing in demo mode
+        await new Promise(resolve => setTimeout(resolve, 2000))
+        
+        // Simulate successful upload with mock data
         setUploadResult({
           success: true,
-          datasetId: result.datasetId,
-          totalProperties: result.totalProperties,
-          validation: result.validation,
-          columnMapping: result.columnMapping,
-          portfolioStats: result.portfolioStats,
-          message: result.message
+          datasetId: Math.floor(Math.random() * 1000) + 1,
+          totalProperties: Math.floor(Math.random() * 500) + 100,
+          validation: {
+            qualityScore: Math.floor(Math.random() * 20) + 80,
+            issues: [
+              'Some addresses missing street numbers',
+              '5 properties have invalid parcel IDs'
+            ]
+          },
+          columnMapping: {
+            parcelId: 'APN',
+            powerToSaleDate: 'Sale Date',
+            delinquentAmount: 'Amount Due',
+            propertyDescription: 'Property Description',
+            address: 'Property Address'
+          },
+          portfolioStats: {
+            scoreDistribution: {
+              high: Math.floor(Math.random() * 50) + 20,
+              medium: Math.floor(Math.random() * 100) + 50,
+              low: Math.floor(Math.random() * 200) + 100
+            }
+          },
+          message: `Successfully processed ${Math.floor(Math.random() * 500) + 100} properties from ${file.name}`
         })
       } else {
-        setUploadResult({
-          success: false,
-          error: result.error || 'Upload failed'
+        const formData = new FormData()
+        formData.append('file', file)
+
+        const token = localStorage.getItem('token')
+        const response = await fetch('/api/upload/csv', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${token}`
+          },
+          body: formData
         })
+
+        const result = await response.json()
+
+        if (response.ok) {
+          setUploadResult({
+            success: true,
+            datasetId: result.datasetId,
+            totalProperties: result.totalProperties,
+            validation: result.validation,
+            columnMapping: result.columnMapping,
+            portfolioStats: result.portfolioStats,
+            message: result.message
+          })
+        } else {
+          setUploadResult({
+            success: false,
+            error: result.error || 'Upload failed'
+          })
+        }
       }
     } catch (error) {
       setUploadResult({
@@ -82,6 +118,7 @@ const Upload: React.FC = () => {
 
   return (
     <div className="space-y-6">
+      {DEMO_MODE && <DemoBanner />}
       <div>
         <h1 className="text-3xl font-bold text-charcoal">Upload Tax Data</h1>
         <p className="text-gray-600 mt-2">
@@ -174,13 +211,13 @@ const Upload: React.FC = () => {
 
                   <div className="flex space-x-4">
                     <a
-                      href="/properties"
+                      href="/app/properties"
                       className="btn-primary"
                     >
                       View Properties
                     </a>
                     <a
-                      href="/analytics"
+                      href="/app/analytics"
                       className="btn-outline"
                     >
                       View Analytics
